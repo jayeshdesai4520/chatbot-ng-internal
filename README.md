@@ -31,14 +31,8 @@ Step four - go to fulfillment section in dialogflow and click save. <br> <br>
 ![](https://imgur.com/CPGs1Xa.png)  <br> <br>
  
 ### Information about some main Intents <br> <br>
-[] Gives information about component
-
-example commands/questions:
-what is Name Entity Recognition ?
-
-expected outcome:
-It uses rule base grammar to extract entities in a text.
-
+[]  
+....
 
 ### Demo 
 Check out new live link demo here it also supports Suggestion chip response [Link](https://tacoaccounttest.github.io/)
