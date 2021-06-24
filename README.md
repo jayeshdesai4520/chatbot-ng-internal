@@ -9,58 +9,56 @@
     
 ## Getting Started
 
-List of some main intents
+### List of some main intents
 
-template -
-example command
-intent name
-outcome
+Template - <br>
+Example command <br>
+Intent name <br>
+Outcome <br>
 
-We need to provide to the users 3 classes of interactions / intents:
+#### Basic information: <br>
 
-basic information:
+hello: <br>
+[Default Welcome Intent] <br>
+Greetings! I am the DBpedia bot, How can I assist? <br>
 
-hello:
-[Default Welcome Intent]
-Greetings! I am the DBpedia bot, How can I assist?
+what can I do: <br>
+[Help_Intent] <br>
+Currently, You can ask me about what is DBpedia? or how to contribute to DBpedia? <br>
 
-what can I do:
-[Help_Intent]
-Currently, You can ask me about what is DBpedia? or how to contribute to DBpedia?
+what is DBpedia: <br>
+[DBpedia_Info] <br>
+DBpedia is a crowd-sourced community effort to extract structured information from Wikipedia and make this information available on the Web. <br>
 
-what is DBpedia:
-[DBpedia_Info]
-DBpedia is a crowd-sourced community effort to extract structured information from Wikipedia and make this information available on the Web.
+how to contribute: <br>
+[DBpedia_Contribute] <br>
+There are multiple ways to contribute to DBpedia You can: 1 - Look at open issues if you want to contribute to the codebase 2 - Improve Documentation 3 - Join the discussion on upcoming features, releases, and issues <br>
 
-how to contribute:
-[DBpedia_Contribute]
-There are multiple ways to contribute to DBpedia You can: 1 - Look at open issues if you want to contribute to the codebase 2 - Improve Documentation 3 - Join the discussion on upcoming features, releases, and issues
+#### Configuration and internal information: <br>
 
-configuration and internal information:
+##### (de-)activate components (this status needs to be stored): <br>
 
-(de-)activate components (this status needs to be stored):
+Add sparql executer: <br>
+[Activate_component_intent] <br>
+succesfully Added SparqlExecuter you can add more components by saying Add and then name of the component. <br>
 
-Add sparql executer:
-[Activate_component_intent]
-succesfully Added SparqlExecuter you can add more components by saying Add and then name of the component.
+Remove sparql executer: <br>
+[Deactivate_component_intent] <br>
+succesfully removed SparqlExecuter from components list <br>
+  
+##### Get information about the current Qanary pipeline configuration: <br>
 
-Remove sparql executer:
-[Deactivate_component_intent]
-succesfully removed SparqlExecuter from components list
+tell me an order of components list: <br>
+[show_component_list] <br>
+currently, active components are SparqlExecuter,QueryBuilder <br>
 
-get information about the current Qanary pipeline configuration:
+#### Ask a KB-related question (handed via Webhook to the Qanary backend) - currently doing <br>
 
-tell me an order of components list:
-[show_component_list]
-currently, active components are SparqlExecuter,QueryBuilder
+#### Additional intent added <br>
 
-ask a KB-related question (handed via Webhook to the Qanary backend) - not done
-
-additional intent added
-
-remove all the components from list:
-[reset_list_of_components]
-Components list are now empty
+remove all the components from list: <br>
+[reset_list_of_components] <br>
+Components list are now empty <br>
 
 
 ### Demo 
