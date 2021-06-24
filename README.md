@@ -52,7 +52,11 @@ tell me an order of components list: <br>
 [show_component_list] <br>
 currently, active components are SparqlExecuter,QueryBuilder <br>
 
-#### Ask a KB-related question (handed via Webhook to the Qanary backend) - currently doing <br>
+#### Ask a KB-related question (handed via Webhook to the Qanary backend): <br>
+
+What is the real name of hulk?: <br>
+[fallback] <br>
+resource:http://dbpedia.org/resource/Hulk answer:Robert Bruce Banner label:Hulk <br>
 
 #### Additional intent added <br>
 
