@@ -8,9 +8,11 @@ app.use(express.json())
 app.get('/', (req, res) => {
     res.send("ok Server Is Working......")
 })
-
+var session 
 var kbquestion
-
+var body 
+var defaultcomponents = ["NED-DBpediaSpotlight", "QueryBuilderSimpleRealNameOfSuperHero", "SparqlExecuter", "OpenTapiocaNED", "BirthDataQueryBuilder", "WikidataQueryExecuter"];
+let sessionidmanagement = new Map()
 /**
  * on this route dialogflow send the webhook request
  * For the dialogflow we need POST Route.
@@ -23,6 +25,8 @@ app.post('/webhook', (request, response) => {
     })
     // create intentMap for handle intent
     let intentMap = new Map();
+    body = request.body
+    session = request.body.session.split('/')[4]
     kbquestion = request.body.queryResult.queryText
     // add intent map 2nd parameter pass function 
     intentMap.set('Default Welcome Intent', Welcome_Intent)
@@ -35,16 +39,16 @@ app.post('/webhook', (request, response) => {
     agent.handleRequest(intentMap)
 })
 
-var activecomponents = ["NED-DBpediaSpotlight", "QueryBuilderSimpleRealNameOfSuperHero", "SparqlExecuter", "OpenTapiocaNED", "BirthDataQueryBuilder", "WikidataQueryExecuter"];
-
 const welcome_message_data = ['Hi! I am the DBpedia bot, How are you doing?','Hello! I am the DBpedia bot,  How can I help you?','Greetings! I am the DBpedia bot,  How can I assist?','Good day! I am the DBpedia bot,  What can I do for you today?']
 
-function Welcome_Intent(agent) { 
+function Welcome_Intent(agent) {
+         
         const welcomeMessageArr = welcome_message_data;
         const textindex = Math.floor(Math.random() * welcomeMessageArr.length);
         const out = welcomeMessageArr[textindex];
         const speechOutput =  out; 
         agent.add(speechOutput)
+        console.log(session)
 }
 
 
@@ -55,6 +59,7 @@ function Active_components_Intent(agent) {
     } else {
         agent.add("currently, active components are " + activecomponents)
     }
+    console.log(body)
 }
 
 
@@ -106,11 +111,11 @@ function fallback(agent) {
             var answertwo = answerinfo[0][infotwo]["value"]
             var answerthree = answerinfo[0][infothree]["value"]
             var output = infoone + ":" + answerone + " " + infotwo + ":" + answertwo + " " + infothree + ":" + answerthree
-            console.log(response)
-            agent.add(output)
+            //console.log(response)
+            agent.add(output) 
 
         }).catch(function(error) {
-            console.log(error)
+            //console.log(error)
             agent.add("No answer could be loaded. Try again? or you can ask for help!")
         });
 }
