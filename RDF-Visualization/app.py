@@ -1,53 +1,55 @@
 from flask import Flask, render_template
+from SPARQLWrapper import SPARQLWrapper, JSON , XML, N3, RDF, CSV, TSV, RDFXML
 import os
 import rdflib.graph as g
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_graph
 from pyvis.network import Network
+import requests
+from qanary_helpers import qanary_queries
 app = Flask('testapp')
-#right now code is messy 
-#read data
-graph = g.Graph()
-graph.parse('data/qanary_urn_graph_558646f1-e64e-47b0-b0e8-daef79cb8984.rdfxml', format='xml')
-print(graph.serialize(format='pretty-xml'))
-#query data
-qres = graph.query(
-    """# Expand From IRIs
-CONSTRUCT {
-  ?iri ?predicate ?object .
-  ?object a ?object_type .
-  ?object <tag:stardog:studio:label> ?object_label_0 .
-  ?object rdfs:label ?object_label_1 .
-  ?object <http://purl.org/dc/elements/1.1/title> ?object_label_2 .
-  ?subject ?predicate_2 ?iri .
-  ?subject a ?subject_type .
-  ?subject <tag:stardog:studio:label> ?subject_label_0 .
-  ?subject rdfs:label ?subject_label_1 .
-  ?subject <http://purl.org/dc/elements/1.1/title> ?subject_label_2 .
-} WHERE {
-  VALUES (?iri) {
-    (<tag:stardog:api:0.44585392708185767>)
-  }
-  { 
-    ?iri ?predicate ?object . 
-    OPTIONAL { ?object a ?object_type . }
-    OPTIONAL { ?object <tag:stardog:studio:label> ?object_label_0 . }
-    OPTIONAL { ?object rdfs:label ?object_label_1 . }
-    OPTIONAL { ?object <http://purl.org/dc/elements/1.1/title> ?object_label_2 . }
-  }
-  UNION {
-    ?subject ?predicate_2 ?iri .
-    OPTIONAL { ?subject a ?subject_type . }
-    OPTIONAL { ?subject <tag:stardog:studio:label> ?subject_label_0 . }
-    OPTIONAL { ?subject rdfs:label ?subject_label_1 . }
-    OPTIONAL { ?subject <http://purl.org/dc/elements/1.1/title> ?subject_label_2 . }
-  }
-}
-LIMIT 1000
 
-""")
+#Get question from https://dbpediachatbot.herokuapp.com/question
+
+question = requests.get("https://dbpediachatbot.herokuapp.com/question").content
+
+#Get Graphid
+r = requests.post('https://webengineering.ins.hs-anhalt.de:43740/startquestionansweringwithtextquestion',
+             params={
+                     "question": question,
+                     "componentlist[]": ["NED-DBpediaSpotlight",
+                     "QueryBuilderSimpleRealNameOfSuperHero",
+                     "SparqlExecuter",
+                     "OpenTapiocaNED",
+                     "BirthDataQueryBuilder",
+                     "WikidataQueryExecuter"]
+})
+res = r.json()
+graphid = res['inGraph']
+
+
+
+#read data
+sparql = SPARQLWrapper("https://webengineering.ins.hs-anhalt.de:40159/qanary/query")
+sparql.setCredentials("admin", "admin")
+sparql_query = """ 
+DESCRIBE *
+FROM <""" + graphid  + """>
+WHERE {
+    ?s a qa:AnnotationOfAnswerSPARQL.
+    ?s oa:hasBody ?sparqlQueryOnDBpedia .
+    ?s oa:annotatedBy ?annotatingService .
+    ?s oa:annotatedAt ?time .
+}
+
+"""
+sparql.setQuery(sparql_query)
+sparql.setReturnFormat(XML)
+sparql.setMethod("POST")
+results = sparql.query().convert()
+print(results)
 
 #rdflib to network graph
-rg = qres
+rg = results
 G = rdflib_to_networkx_graph(rg)
 print("networkx Graph loaded successfully with length {}".format(len(G)))
 

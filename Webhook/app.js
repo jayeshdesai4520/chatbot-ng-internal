@@ -6,7 +6,7 @@ const {
 const app = express()
 app.use(express.json())
 app.get('/', (req, res) => {
-    res.send("ok Server Is Working......")
+    res.send("ok Server Is Working.....")
 })
 
 var session 
@@ -30,6 +30,7 @@ app.post('/webhook', (request, response) => {
         request: request,
         response: response
     })
+   
     // create intentMap for handle intent
     let intentMap = new Map();
     body = request.body
@@ -80,7 +81,7 @@ function Active_components_Intent(agent) {
 
 
 function Reset_components_list_Intent(agent) {
-    sessionidmanagement.clear()
+    sessionidmanagement.set(session, "")
     agent.add("Components list are now empty") 
     console.log(sessionidmanagement)
 }
