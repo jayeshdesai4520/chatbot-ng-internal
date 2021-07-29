@@ -61,8 +61,6 @@ function myFunction() {
    }) }, 15000);
 }
 
-myFunction()
-
 
 function compare(a) {  
     global.a   
@@ -73,5 +71,6 @@ module.exports.compare = compare;
 
 
 app.listen(process.env.PORT || 3000, () => {
+    myFunction()
     console.log("Server is Running on port 3000")
 })
