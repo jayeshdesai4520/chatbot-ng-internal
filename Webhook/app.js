@@ -64,7 +64,7 @@ function myFunction() {
 
 
 async function initialUpdate(){
-    const response = await axios.get('https://webengineering.ins.hs-anhalt.de:43740/components')
+    await axios.get('https://webengineering.ins.hs-anhalt.de:43740/components')
     .then(function (response) {
         let body = response.data 
         global.a 
