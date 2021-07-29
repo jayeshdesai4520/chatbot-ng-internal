@@ -26,9 +26,9 @@ function welcomeIntent(agent) {
 
 function activeComponentsIntent(agent) {
     if (!sessionIdManagement.has(variable.sessionId)) {
-        agent.add("currently, there are no active components")
+        agent.add("Currently, there are no active components.")
     } else {
-        agent.add("currently, active components are " + sessionIdManagement.get(variable.sessionId))
+        agent.add("Currently, active components are " + sessionIdManagement.get(variable.sessionId))
     } 
     console.log(sessionIdManagement)
 }
@@ -36,7 +36,7 @@ function activeComponentsIntent(agent) {
 function resetComponentsListIntent(agent) {
     sessionIdManagement.set(variable.sessionId, "")
     sessionIdManagement.set(variable.sessionId,defaultComponents)
-    agent.add("Reset Successfully, Components list are now empty") 
+    agent.add("Reset Successfully, Components list are now empty.") 
     console.log(sessionIdManagement)
 }
 
@@ -46,7 +46,7 @@ function deactivateComponentIntent(agent) {
     let fuzzy = variable.compare(a)  
     let deactivateResult = a.get(deactivate);
     if (deactivateResult == null){
-        agent.add(deactivate + "   not available to know more about active components use command 'list of active qanary components'")
+        agent.add(deactivate + "   not available to know more about active components use command 'list of active qanary components'.")
     }else{
     let deactivateComponent = deactivateResult[0][1]     
     let finalComponentAdd = deactivateComponent.replace(/['"]+/g, '') 
@@ -54,11 +54,11 @@ function deactivateComponentIntent(agent) {
     let duplicateArray = sessionIdManagement.get(variable.sessionId)
     let n = duplicateArray.includes(finalComponentAdd)
     if(n == false){
-        agent.add(finalComponentAdd + " do not exists in the list of active components to know more about active components use command 'list of active components'")
+        agent.add(finalComponentAdd + " do not exists in the list of active components to know more about active components use command 'list of active components'.")
     }else{
     deleteComponent = deleteComponent.toString().replace("," + finalComponentAdd, "")
     sessionIdManagement.set(variable.sessionId,deleteComponent) 
-    agent.add("successfully removed " + deactivateComponent + " from components list")
+    agent.add("Successfully removed " + deactivateComponent + " from components list.")
     console.log(sessionIdManagement)
        }  
     }
@@ -71,17 +71,17 @@ function activateComponentIntent(agent) {
     //console.log(fuzzy.values())
     let compareResult = a.get(activateComponent);
     if (compareResult == null){
-        agent.add(activateComponent + " not available to know more about active components use command 'list of active qanary components'")
+        agent.add(activateComponent + " not available to know more about active components use command 'list of active qanary components'.")
     }else{  
     let addComponent = compareResult[0][1] 
     let finalComponentAdd = addComponent.replace(/['"]+/g, '') 
     let duplicateArray = sessionIdManagement.get(variable.sessionId)
     let n = duplicateArray.includes(finalComponentAdd); 
     if(n == true){
-        agent.add(finalComponentAdd + " already exists in the list to know more about active components use command 'list of active qanary components")
+        agent.add(finalComponentAdd + " already exists in the list to know more about active components use command 'list of active qanary components'.")
     }else{
     sessionIdManagement.set(variable.sessionId, sessionIdManagement.get(variable.sessionId) + "," +  finalComponentAdd)
-    agent.add("successfully Added " + finalComponentAdd + " you can add more components by saying Add and then name of the component")
+    agent.add("Successfully Added " + finalComponentAdd + " you can add more components by saying Add and then name of the component.")
     console.log(sessionIdManagement)
      }
     }
@@ -89,7 +89,7 @@ function activateComponentIntent(agent) {
 
 function activeQanaryIntent(agent) { 
     if (askQanaryCount.get(variable.sessionId) == 20){
-         agent.add("Limit reached! You can ask again after 5 minutes")
+         agent.add("Limit reached! You can ask again after 5 minutes.")
          setTimeout(function(){  
             askQanaryCount.set(variable.sessionId,0)
             console.log("reset done")
@@ -109,12 +109,12 @@ function activateProfileIntent(agent) {
     let duplicateArray = sessionIdManagement.get(variable.sessionId)
     let n = duplicateArray.includes(finalComponentAdd); 
     if(n == true){
-        agent.add("this profile already exists in the list to know more about active components use command 'list of active qanary components")
+        agent.add("This profile already exists in the list to know more about active components use command 'list of active qanary components'.")
     } else{
     sessionIdManagement.set(variable.sessionId, sessionIdManagement.get(variable.sessionId) + "," +  coronabotProfile)
     agent.add(profile + " Profile added successfully") 
     } }else{
-        agent.add(profile + " Profile not defined by admin or by you")   
+        agent.add(profile + " Profile not defined by admin or by you.")   
     }
     console.log(sessionIdManagement.get(variable.sessionId))  
 }
@@ -128,7 +128,7 @@ function componentStartwithIntent(agent) {
     let startsWith = newfilteredList.filter((componentName) => componentName[0]===startWithName.toUpperCase())
     console.log(startsWith)  
     if(startsWith.length === 0){
-        agent.add("Component name starting with " + startWithName + " are not available") 
+        agent.add("Component name starting with " + startWithName + " are not available.") 
     }else{
         const str = startsWith.toString();
         agent.add("Components starting with " + startWithName + " are " + str)  
@@ -160,7 +160,7 @@ function createProfileIntent(agent) {
     let profileName = agent.parameters.newprofilename;
     profiles.set(variable.sessionId + profileName,"") 
     console.log(profiles)
-    agent.add(profileName + " Profile added successfully");  
+    agent.add(profileName + " Profile added successfully.");  
 }
 
 function addComponentsToProfile(agent) {  
@@ -169,13 +169,13 @@ function addComponentsToProfile(agent) {
     let fuzzy = variable.compare(a)  
     let checkComponents = a.get(componentName);
     if (checkComponents == null){
-        agent.add(componentName + " not available to know more about active components use command 'list of active qanary components'")
+        agent.add(componentName + " not available to know more about active components use command 'list of active qanary components'.")
     }else{
     let addComponents = checkComponents[0][1]     
     let finalComponentAdd = addComponents.replace(/['"]+/g, '') 
     console.log(finalComponentAdd)
     profiles.set(variable.sessionId + profileName, profiles.get(variable.sessionId + profileName) + "," +  finalComponentAdd)
-    agent.add("successfully Added " + finalComponentAdd + "to " + profileName + " you can add more components by saying Add and then name of the component")
+    agent.add("Successfully Added " + finalComponentAdd + "to " + profileName + " you can add more components by saying Add and then name of the component.")
     console.log(profiles)
     } 
 }

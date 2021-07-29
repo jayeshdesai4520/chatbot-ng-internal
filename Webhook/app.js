@@ -48,6 +48,7 @@ app.get('/question', (req, res) => {
 
 
 function myFunction() {
+  
   setInterval(function(){ 
     axios.get('https://webengineering.ins.hs-anhalt.de:43740/components')
     .then(function (response) {
@@ -62,15 +63,33 @@ function myFunction() {
 }
 
 
+async function initialUpdate(){
+    const response = await axios.get('https://webengineering.ins.hs-anhalt.de:43740/components')
+    .then(function (response) {
+        let body = response.data 
+        global.a 
+        for (var i = 0; i < body.length; i++){   
+          a.add(JSON.stringify(body[i]["name"]))
+         }    
+        compare(a) 
+        console.log("Initial Update Done")
+   })  
+   app.listen(process.env.PORT || 3000, () => {
+    myFunction() 
+    console.log("Server is Running on port 3000")
+   })
+}
+
+
+
 function compare(a) {  
     global.a   
     return a
 }  
 
+
+initialUpdate()
+
 module.exports.compare = compare; 
 
 
-app.listen(process.env.PORT || 3000, () => {
-    myFunction()
-    console.log("Server is Running on port 3000")
-})
