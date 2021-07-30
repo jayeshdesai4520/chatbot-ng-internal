@@ -1,0 +1,34 @@
+[33me2ee3d1[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: commit: add async function
+[33meddac66[m HEAD@{1}: commit: add async function
+[33m4796e4f[m HEAD@{2}: commit: fix
+[33m9fd7b62[m HEAD@{3}: commit: Dockerfile for python
+[33m5bef7a2[m HEAD@{4}: commit: Dockerfile for python
+[33m72b0b5d[m HEAD@{5}: commit: changed variable names to CamelCase format
+[33m878a00f[m HEAD@{6}: pull origin main: Fast-forward
+[33m4eb7370[m HEAD@{7}: commit: update
+[33m5a306cc[m HEAD@{8}: commit: add template folder
+[33m20cdd5e[m HEAD@{9}: commit: update code
+[33mb3c6eeb[m HEAD@{10}: commit: make it better
+[33me82820f[m HEAD@{11}: commit: add user session code
+[33m5710a80[m HEAD@{12}: commit: make it better
+[33mb2ead97[m HEAD@{13}: commit: update readme
+[33m8161d5e[m HEAD@{14}: commit: update readme
+[33m7bb6dae[m HEAD@{15}: commit: added API related function
+[33md9bce71[m HEAD@{16}: commit: updated zip file
+[33m57a4f3f[m HEAD@{17}: commit: added new intent
+[33m800b10a[m HEAD@{18}: commit: update readme.md
+[33m63ca3f8[m HEAD@{19}: commit: add visualization code
+[33m1f5024c[m HEAD@{20}: commit: update readme.md
+[33m7dc97ce[m HEAD@{21}: commit: rdf visualization code
+[33m43803d7[m HEAD@{22}: commit: fix code
+[33mbdd0590[m HEAD@{23}: commit: update readme
+[33m00c437e[m HEAD@{24}: commit: update zip
+[33m6f248d8[m HEAD@{25}: commit: new intent
+[33mb6cff44[m HEAD@{26}: commit: updated package.json
+[33m07c3bf2[m HEAD@{27}: commit: Updated zip file
+[33m676a13f[m HEAD@{28}: commit: Added new Intents
+[33m446c04a[m HEAD@{29}: commit: Added more functions
+[33mf6820e8[m HEAD@{30}: commit: Added sample weather api function
+[33m00bd075[m HEAD@{31}: commit: added webhook and some changes
+[33m6ffafc6[m HEAD@{32}: commit: initial files
+[33m7ddcdc6[m HEAD@{33}: clone: from https://github.com/jayeshdesai4520/chatbot-ng-internal

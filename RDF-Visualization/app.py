@@ -9,14 +9,11 @@ import requests
 from qanary_helpers import qanary_queries
 app = Flask('testapp')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-#right now code is messy 
  
-#visualization
-
 global graphid 
 
 @app.route('/updategraphvalue')
-def generategraphid():
+def generate_graphid():
     global graphid   
     req = requests.get("https://dbpediachatbot.herokuapp.com/question").content
     req = req.decode("utf-8") 
@@ -37,9 +34,8 @@ def generategraphid():
     print(graphid) 
     return graphid
 
-
 @app.route('/showgraph')
-def showgraph(): 
+def show_graph(): 
     global graphid        
     #read data 
     sparql = SPARQLWrapper("https://webengineering.ins.hs-anhalt.de:40159/qanary/query")
@@ -58,10 +54,8 @@ def showgraph():
     sparql.setReturnFormat(XML)
     sparql.setMethod("POST")
     results = sparql.query().convert() 
-    print(results)
-    #rdflib to  networkgraph
-    rg = results 
-    G = rdflib_to_networkx_graph(rg)
+    print(results) 
+    G = rdflib_to_networkx_graph(results)
     print("networkx Graph loaded successfully with length {}".format(len(G)))
     net = Network(height="750px", width="100%")
     net.from_nx(G)
@@ -71,7 +65,7 @@ def showgraph():
     return render_template('index.html')
 
 @app.route('/graphidnumber')
-def graphidnumber():
+def graph_id_number():
     global graphid
     print(graphid)
     return graphid
@@ -87,7 +81,7 @@ def user(name):
         return errorpage
 
 @app.route('/visualize/example')
-def htmlpage(): 
+def html_page(): 
     #Get Graphid
     r = requests.post('https://webengineering.ins.hs-anhalt.de:43740/startquestionansweringwithtextquestion',
             params={
@@ -119,10 +113,8 @@ def htmlpage():
     sparql.setReturnFormat(XML)
     sparql.setMethod("POST")
     results = sparql.query().convert() 
-    print(results)
-    #rdflib to  networkgraph
-    rg = results 
-    G = rdflib_to_networkx_graph(rg)
+    print(results) 
+    G = rdflib_to_networkx_graph(results)
     print("networkx Graph loaded successfully with length {}".format(len(G)))
     net = Network(height="750px", width="100%")
     net.from_nx(G)

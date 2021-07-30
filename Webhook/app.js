@@ -2,7 +2,7 @@ const express = require('express')
 const axios = require('axios');
 const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fulfillment')
 const fuzzySet = require('fuzzyset')
-const intent = require("./intent.js")  
+const intent = require("./intent")  
 let sessionId 
 let kbQuestion 
 let intentMap = new Map(); 
@@ -33,7 +33,7 @@ app.post('/webhook', (request, response) => {
         response: response
     }) 
     sessionId = request.body.session.split('/')[4] 
-    if(request.body.queryResult.intent.displayName == "Default Fallback Intent"){
+    if(request.body.queryResult.intent.displayName == 'Default Fallback Intent'){
     kbQuestion = request.body.queryResult.queryText
     }   
     module.exports.sessionId = sessionId; 
@@ -46,7 +46,7 @@ app.get('/question', (req, res) => {
     res.send(kbQuestion)  
 })
 
-
+console.log(sessionId)
 function myFunction() {
   
   setInterval(function(){ 
@@ -55,10 +55,10 @@ function myFunction() {
         let body = response.data 
         global.a 
         for (var i = 0; i < body.length; i++){   
-          a.add(JSON.stringify(body[i]["name"]))
+          a.add(JSON.stringify(body[i]['name']))
          }    
         compare(a) 
-        console.log("15 seconds done")
+        console.log('15 seconds done')
    }) }, 15000);
 }
 
@@ -69,14 +69,14 @@ async function initialUpdate(){
         let body = response.data 
         global.a 
         for (var i = 0; i < body.length; i++){   
-          a.add(JSON.stringify(body[i]["name"]))
+          a.add(JSON.stringify(body[i]['name']))
          }    
         compare(a) 
-        console.log("Initial Update Done")
+        console.log('Initial Update Done')
    })  
    app.listen(process.env.PORT || 3000, () => {
     myFunction() 
-    console.log("Server is Running on port 3000")
+    console.log('Server is Running on port 3000')
    })
 }
 
