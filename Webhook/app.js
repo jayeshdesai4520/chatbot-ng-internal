@@ -87,7 +87,6 @@ function compare(a) {
     return a
 }  
 
-
 initialUpdate()
 
 module.exports.compare = compare; 
