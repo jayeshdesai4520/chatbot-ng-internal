@@ -34,6 +34,11 @@ def generate_graphid():
     print(graphid) 
     return graphid
 
+
+test = generate_graphid()
+print(test)
+
+
 @app.route('/showgraph')
 def show_graph(): 
     global graphid        
