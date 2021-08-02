@@ -11,6 +11,6 @@ RUN pip install -r requirements.txt
 # Bundle app source
 COPY . .
 
-EXPOSE 3001
+EXPOSE 5000
 
 CMD [ "python", "app.py" ]
