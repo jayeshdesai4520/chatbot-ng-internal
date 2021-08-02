@@ -5,6 +5,7 @@ const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fu
 const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter'];
 const welcomeMessageData = ['Hi! I am the DBpedia bot, How are you doing?','Hello! I am the DBpedia bot,  How can I help you?','Greetings! I am the DBpedia bot,  How can I assist?','Good day! I am the DBpedia bot,  What can I do for you today?']
 const coronabotProfile = ['coronabot-answer-generation','coronabot-data-acquisition']
+const rdfVizURL = 'https://webengineering.ins.hs-anhalt.de:41022'
 let sessionIdManagement = new Map() 
 let askQanaryCount = new Map() 
 let profiles = new Map() 
@@ -136,11 +137,11 @@ function componentStartwithIntent(agent) {
 }
 
 function show_RdfgraphIntent(agent) { 
-    return axios.get('https://rdfgraphvisualizations.herokuapp.com/updategraphvalue')
+    return axios.get(rdfVizURL + '/updategraphvalue')
     .then(function (response) { 
         let graphId = response.data
         console.log(graphId)
-        let outputLink = 'Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId
+        let outputLink = 'Go to this link to see RDF Visualization - ' + rdfVizURL + '/visualize/' + graphId
         agent.add(outputLink) 
         //agent.add(new Card({
         //title: `RDF Graph Visualization`,
