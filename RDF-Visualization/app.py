@@ -126,5 +126,5 @@ def html_page():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, ssl_context=(os.environ.get("SSL_CERT"), os.environ.get("SSL_KEY")))
     app.run()

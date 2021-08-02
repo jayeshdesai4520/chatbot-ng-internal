@@ -1,4 +1,6 @@
 const express = require('express')
+const fs = require('fs')
+const https = require('https')
 const axios = require('axios');
 const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fulfillment')
 const fuzzySet = require('fuzzyset')
@@ -73,8 +75,14 @@ async function initialUpdate(){
          }    
         compare(a) 
         console.log('Initial Update Done')
-   })  
-   app.listen(process.env.PORT || 3000, () => {
+   })
+
+   var options = {
+      key: fs.readFileSync('./certs/key.key'),
+      cert: fs.readFileSync('./certs/cert.cert'),
+   };
+
+   var server = https.createServer(options, app).listen(process.env.PORT || 3000, () => {
     myFunction() 
     console.log('Server is Running on port 3000')
    })
