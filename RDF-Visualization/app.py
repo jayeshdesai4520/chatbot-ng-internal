@@ -1,8 +1,7 @@
 from flask import *  
 import os 
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_graph
-from pyvis.network import Network
-from flask import Flask, render_template
+from pyvis.network import Network 
 from SPARQLWrapper import SPARQLWrapper, JSON , XML, N3, RDF, CSV, TSV, RDFXML 
 import requests 
 app = Flask('testapp')
