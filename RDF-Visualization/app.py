@@ -6,7 +6,6 @@ from SPARQLWrapper import SPARQLWrapper, JSON , XML, N3, RDF, CSV, TSV, RDFXML
 import requests 
 app = Flask('testapp')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
- 
 global graph_id 
 
 @app.route('/updategraphvalue')
