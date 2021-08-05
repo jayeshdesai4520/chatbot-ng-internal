@@ -2,32 +2,206 @@ const variable = require('./app');
 const fuzzySet = require('fuzzyset') 
 const axios = require('axios');
 const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fulfillment')
+const {LinkOutSuggestion,Suggestions} = require('actions-on-google'); 
 const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter'];
 const welcomeMessageData = ['Hi! I am the DBpedia bot, How are you doing?','Hello! I am the DBpedia bot,  How can I help you?','Greetings! I am the DBpedia bot,  How can I assist?','Good day! I am the DBpedia bot,  What can I do for you today?']
 const coronabotProfile = ['coronabot-answer-generation','coronabot-data-acquisition']
 let sessionIdManagement = new Map() 
 let askQanaryCount = new Map() 
+let lastKbquestion = new Map() 
 let profiles = new Map() 
 a = fuzzySet();
 
 
-function welcomeIntent(agent) {
+function welcomeIntent(agent) { 
+        let conv = agent.conv()
         if(!sessionIdManagement.has(variable.sessionId)){
             sessionIdManagement.set(variable.sessionId,defaultComponents)
             askQanaryCount.set(variable.sessionId,0)
         }
         const welcomeMessageArr = welcomeMessageData;
         const textindex = Math.floor(Math.random() * welcomeMessageArr.length);
-        const output = welcomeMessageArr[textindex]; 
-        agent.add(output)
-        console.log(sessionIdManagement) 
+        const output = welcomeMessageArr[textindex];
+        console.log(sessionIdManagement)
+        console.log(agent.requestSource)
+        if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
+            conv.ask(output)
+            conv.ask(new Suggestions("What is dbpedia?"))
+            conv.ask(new Suggestions("How to contribute to dbpedia?"))
+            conv.ask(new LinkOutSuggestion({
+                name: 'Tutorial',
+                url: 'https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about'
+            })) 
+            agent.add(conv)
+        }else{
+            agent.add(output)    
+            const payload = {
+                      "richContent": [
+                        [
+                          {
+                            "options": [
+                              { 
+                                "text": "What is dbpedia?",
+                              },
+                              { 
+                                "text": "How to contribute to dbpedia?",
+                              },
+                              {
+                                "link": 'https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about',
+                                "text": "Check Tutorial",
+                                "image": {
+                                  "src": {
+                                    "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                                  }
+                                }
+                              }
+                            ],
+                            "type": "chips"
+                          }
+                        ]
+                      ]
+                    }
+            agent.add(
+              new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true})
+            )
+            }  
+
+}
+
+function dbpediaInfoIntent(agent) { 
+    let conv = agent.conv() 
+    console.log(agent.requestSource)
+        if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
+            conv.ask('DBpedia is a crowd-sourced community effort to extract structured information from Wikipedia and make this information available on the Web.')
+            conv.ask(new LinkOutSuggestion({
+                name: 'Learn More',
+                url: 'https://www.dbpedia.org/about/',
+            }))
+            agent.add(conv)
+        }else{ 
+            agent.add('DBpedia is a crowd-sourced community effort to extract structured information from Wikipedia and make this information available on the Web.')    
+            const payload = {
+                      "richContent": [
+                        [
+                          {
+                            "type": "chips",
+                            "options": [
+                              {
+                                "image": {
+                                  "src": {
+                                    "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                                  }
+                                },
+                                "link": "https://www.dbpedia.org/about/",
+                                "text": "Learn More"
+                              },
+                              {
+                                "text": "Getting Started",
+                                "link": "https://www.dbpedia.org/",
+                                "image": {
+                                  "src": {
+                                    "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      ]
+                    } 
+            agent.add(
+              new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true})
+            )
+        }
+     
+}
+
+function dbpediaContributeIntent(agent) {
+    let conv = agent.conv() 
+    console.log(agent.requestSource)
+        if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
+            conv.ask('There are multiple ways to contribute to DBpedia, You can: 1 - Look at open issues if you want to contribute to the codebase 2 - Improve Documentation 3 - Join the discussion on upcoming features, releases, and issues')
+            conv.ask(new LinkOutSuggestion({
+                name: 'Get Involved',
+                url: 'https://www.dbpedia.org/community/improve/',
+            }))
+            agent.add(conv)
+        }else{ 
+            agent.add('There are multiple ways to contribute to DBpedia, You can: 1 - Look at open issues if you want to contribute to the codebase 2 - Improve Documentation 3 - Join the discussion on upcoming features, releases, and issues')    
+            const payload = {
+                  "richContent": [
+                    [
+                      {
+                        "options": [
+                          {
+                            "text": "Get Involved",
+                            "link": "https://www.dbpedia.org/community/improve/",
+                            "image": {
+                              "src": {
+                                "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                              }
+                            }
+                          },
+                          {
+                            "image": {
+                              "src": {
+                                "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                              }
+                            },
+                            "link": "https://sourceforge.net/projects/dbpedia/lists/dbpedia-discussion",
+                            "text": "Mailing List"
+                          },
+                          {
+                            "link": "https://dbpedia.slack.com/",
+                            "image": {
+                              "src": {
+                                "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                              }
+                            },
+                            "text": "Slack"
+                          }
+                        ],
+                        "type": "chips"
+                      }
+                    ]
+                  ]
+                }
+            agent.add(
+              new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true})
+            )
+        }
 }
 
 function activeComponentsIntent(agent) {
+    let conv = agent.conv()
     if (!sessionIdManagement.has(variable.sessionId)) {
-        agent.add('Currently, there are no active components.')
+        agent.add('Currently, there are no active components, you can add components by saying Add and then name of the component.')
     }else{
-        agent.add('Currently, active components are ' + sessionIdManagement.get(variable.sessionId))
+        let output = 'Currently, active components are ' + sessionIdManagement.get(variable.sessionId)
+        if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
+                conv.ask(output) 
+                conv.ask(new Suggestions("Reset component list"));
+                agent.add(conv)
+            }else{ 
+                agent.add(output)    
+                const payload =  {
+                      "richContent": [
+                        [
+                          {
+                            "options": [
+                               { 
+                                "text": "Reset component list",
+                               }
+                            ],
+                            "type": "chips"
+                          }
+                        ]
+                      ]
+                    }
+                agent.add(
+                new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true})
+                )
+            }   
     } 
     console.log(sessionIdManagement)
 }
@@ -49,20 +223,31 @@ function deactivateComponentIntent(agent) {
     }else{
         let deactivateComponent = deactivateResult[0][1]     
         let finalComponentAdd = deactivateComponent.replace(/['"]+/g, '') 
+        console.log(defaultComponents)
+        console.log(typeof(defaultComponents))
         console.log(finalComponentAdd) 
         let duplicateArray = sessionIdManagement.get(variable.sessionId)
         let n = duplicateArray.includes(finalComponentAdd)
-        console.log(n)
+        console.log(typeof(duplicateArray))
+        console.log(duplicateArray) 
+        firstComponent = duplicateArray[0]
+        console.log(typeof(firstComponent))
+        console.log(firstComponent) 
         if(n == false){
             agent.add(finalComponentAdd + ' do not exists in the list of active components to know more about active components use command \'list of active components\'.')
         }else{
+            if(finalComponentAdd == firstComponent){
+                console.log("yes it is first")
+            }
             deleteComponent = deleteComponent.toString().replace("," + finalComponentAdd, "")
+            console.log(typeof(deleteComponent))
             sessionIdManagement.set(variable.sessionId,deleteComponent) 
             agent.add("Successfully removed " + deactivateComponent + " from components list.")
             console.log(sessionIdManagement)
         }  
     }
 }
+
 
 function activateComponentIntent(agent) {
     let activate = agent.parameters.activatecomponent; 
@@ -76,16 +261,10 @@ function activateComponentIntent(agent) {
         let addComponent = compareResult[0][1] 
         let finalComponentAdd = addComponent.replace(/['"]+/g, '') 
         let duplicateArray = sessionIdManagement.get(variable.sessionId)
-        console.log(typeof(duplicateArray))
-        console.log(duplicateArray)
-        console.log(duplicateArray[0])
-        let n = duplicateArray.includes(finalComponentAdd);  
+        let n = duplicateArray.includes(finalComponentAdd); 
         if(n == true){
             agent.add(finalComponentAdd + ' already exists in the list to know more about active components use command \'list of active qanary components\'.')
         }else{
-            if(finalComponentAdd == duplicateArray[0]){
-                console.log("yes it is first")
-            }
             sessionIdManagement.set(variable.sessionId, sessionIdManagement.get(variable.sessionId) + ',' +  finalComponentAdd)
             agent.add('Successfully Added ' + finalComponentAdd + ' you can add more components by saying Add and then name of the component.')
             console.log(sessionIdManagement)
@@ -142,24 +321,7 @@ function componentStartwithIntent(agent) {
     } 
 }
 
-function show_RdfgraphIntent(agent) { 
-    return axios.get('https://rdfgraphvisualizations.herokuapp.com/updategraphvalue')
-    .then(function (response) { 
-        let graphId = response.data
-        console.log(graphId)
-        let outputLink = 'Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId
-        agent.add(outputLink) 
-        //agent.add(new Card({
-        //title: `RDF Graph Visualization`,
-         //buttonText: 'open website',
-         //buttonUrl: 'https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId
-           //})
-        // )    
-    }).catch(function(error) {
-            console.log(error)
-            agent.add('No visualization could be loaded. Try again? or you can ask for help!')
-        });
-}
+
 
 //Profile related Intents
 
@@ -240,14 +402,71 @@ function componentInformationFromProfile(agent) {
 }
 //End
 
+function show_RdfgraphIntent(agent) { 
+    console.log(lastKbquestion.get(variable.sessionId) )
+    let params = {
+                    "question": lastKbquestion.get(variable.sessionId),
+                    "componentlist": sessionIdManagement.get(variable.sessionId)
+    }
+    return axios.post('https://webengineering.ins.hs-anhalt.de:43740/startquestionansweringwithtextquestion', params)
+    .then(function (response) { 
+        let conv = agent.conv() 
+        let graphId = response.data.inGraph 
+        console.log(graphId)
+        module.exports.graphId = graphId; 
+        let outputLink = 'Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId
+        let website = 'https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId
+        if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
+            conv.ask('Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId)
+            conv.ask(new LinkOutSuggestion({
+                name: 'Graph Visualization',
+                url: website,
+            }))
+            agent.add(conv)
+        }else{
+            agent.add(outputLink)    
+            const payload = {
+                      "richContent": [
+                        [
+                          {
+                            "options": [
+                              {
+                                "link": website,
+                                "text": "Graph Visualization",
+                                "image": {
+                                  "src": {
+                                    "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                                  }
+                                }
+                              },
+                            ],
+                            "type": "chips"
+                          }
+                        ]
+                      ]
+                    }
+            agent.add(
+              new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true})
+            )
+            }    
+        }).catch(function(error) {
+            console.log(error)
+            agent.add('No visualization could be loaded. Try again? or you can ask for help!')
+        });
+}
+
+
 function fallBack(agent) {
+    let conv = agent.conv() 
     console.log(variable.kbQuestion)
+    lastKbquestion.set(variable.sessionId,variable.kbQuestion)
+    console.log(lastKbquestion)
     return axios.post('https://webengineering.ins.hs-anhalt.de:43740/gerbil-execute/' + sessionIdManagement.get(variable.sessionId)  + '?query=' + variable.kbQuestion, {
             headers: {
                 'content-type': 'text/plain'
             }
         })
-        .then(function(response) {
+        .then(function(response) { 
             let body = response.data.questions
             let status = response.status
             result = JSON.stringify(body[0])
@@ -264,19 +483,117 @@ function fallBack(agent) {
             let answerTwo = answerInfo[0][infoTwo]["value"]
             let answerThree = answerInfo[0][infoThree]["value"]
             let output = infoOne + ':' + answerOne + ' ' + infoTwo + ':' + answerTwo + ' ' + infoThree + ':' + answerThree
-            //console.log(response)
-            agent.add(output) 
+            //console.log(response) 
+            console.log(agent.requestSource)
+            if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
+                conv.ask(output)
+                conv.ask(new Suggestions("show rdf graph"));
+                agent.add(conv)
+            }else{ 
+                agent.add(output)    
+                const payload =  {
+                      "richContent": [
+                        [
+                          {
+                            "options": [
+                              { 
+                                "text": "show rdf graph",
+                              }
+                            ],
+                            "type": "chips"
+                          }
+                        ]
+                      ]
+                    }
+                agent.add(
+                new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true})
+                )
+            }
 
         }).catch(function(error) {
+            let output = 'No answer could be loaded. Try again? or you can ask for help!' 
             console.log(error)
-            agent.add('No answer could be loaded. Try again? or you can ask for help!')
+            console.log(agent.requestSource)
+            if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
+                conv.ask(output)
+                conv.ask(new Suggestions("Help"))
+                conv.ask(new LinkOutSuggestion({
+                name: 'Check Tutorial',
+                url: 'https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about',
+            }))
+            agent.add(conv)
+            }else{ 
+                agent.add(output)    
+                const payload =  {
+                      "richContent": [
+                        [
+                          {
+                            "options": [
+                              { 
+                                "text": "Help",
+                              },
+                              {
+                                "link": 'https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about',
+                                "text": "Check Tutorial",
+                                "image": {
+                                  "src": {
+                                    "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                                  }
+                                }
+                              }
+                            ],
+                            "type": "chips"
+                          }
+                        ]
+                      ]
+                    }
+                agent.add(
+                new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true})
+                )
+            } 
         });
 }
 
 
-function payloadTest(agent) {  
-    agent.add(variable.sessionId) 
+function helpIntent(agent) {
+    let conv = agent.conv()
+    let output = 'Currently, You can ask me about what is DBpedia? or how to contribute to DBpedia? or you can ask me a question like What is the real name of Batman?'
+    console.log(agent.requestSource)
+            if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
+                conv.ask(output) 
+                conv.ask(new LinkOutSuggestion({
+                name: 'Tutorial',
+                url: 'https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about',
+            }))
+            agent.add(conv)
+            }else{ 
+                agent.add(output)    
+                const payload =  {
+                      "richContent": [
+                        [
+                          {
+                            "options": [
+                              {
+                                "link": 'https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about',
+                                "text": "Check Tutorial",
+                                "image": {
+                                  "src": {
+                                    "rawUrl": "https://i.postimg.cc/hjks7bXp/DBpedia-Logo.png"
+                                  }
+                                }
+                              }
+                            ],
+                            "type": "chips"
+                          }
+                        ]
+                      ]
+                    }
+                agent.add(
+                new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true})
+                )
+            }    
 }
 
+ 
 
-module.exports = { payloadTest,welcomeIntent,activeComponentsIntent,resetComponentsListIntent,deactivateComponentIntent,activateComponentIntent,activeQanaryIntent,activateProfileIntent,componentStartwithIntent,show_RdfgraphIntent,createProfileIntent,addComponentsToProfile,removeComponentFromProfile,componentInformationFromProfile,fallBack  };
+module.exports = { welcomeIntent,dbpediaInfoIntent,dbpediaContributeIntent,activeComponentsIntent,resetComponentsListIntent,deactivateComponentIntent,activateComponentIntent,activeQanaryIntent,activateProfileIntent,componentStartwithIntent,show_RdfgraphIntent,createProfileIntent,addComponentsToProfile,removeComponentFromProfile,componentInformationFromProfile,helpIntent,fallBack  };
