@@ -6,7 +6,6 @@ from SPARQLWrapper import SPARQLWrapper, JSON , XML, N3, RDF, CSV, TSV, RDFXML
 import requests 
 app = Flask('testapp')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-global graph_id 
 
 @app.route('/updategraphvalue')
 def generate_graph_id():
@@ -27,9 +26,12 @@ def generate_graph_id():
     graph_id = res_json['inGraph'] 
     return graph_id
 
+
 @app.route('/showgraph')
 def show_graph(): 
-    global graph_id   
+    get_graph_id = requests.get("https://dbpediachatbot.herokuapp.com/graphId").content
+    graph_id = get_question.decode("utf-8") 
+    print(graph_id)
     sparql_database = SPARQLWrapper("https://webengineering.ins.hs-anhalt.de:40159/qanary/query")
     sparql_database.setCredentials("admin", "admin")
     sparql_query = """ 
