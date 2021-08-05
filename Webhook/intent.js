@@ -403,7 +403,7 @@ function componentInformationFromProfile(agent) {
 //End
 
 function show_RdfgraphIntent(agent) { 
-    console.log(lastKbquestion.get(variable.sessionId) )
+    console.log(lastKbquestion.get(variable.sessionId))
     let params = {
                     "question": lastKbquestion.get(variable.sessionId),
                     "componentlist": sessionIdManagement.get(variable.sessionId)
@@ -461,7 +461,7 @@ function fallBack(agent) {
     console.log(variable.kbQuestion)
     lastKbquestion.set(variable.sessionId,variable.kbQuestion)
     console.log(lastKbquestion)
-    return axios.post('https://webengineering.ins.hs-anhalt.de:43740/gerbil-execute/' + sessionIdManagement.get(variable.sessionId)  + '?query=' + variable.kbQuestion, {
+    return axios.post('https://webengineering.ins.hs-anhalt.de:43740/gerbil-execute/' + sessionIdManagement.get(variable.sessionId)  + '?query=' + lastKbquestion.get(variable.sessionId), {
             headers: {
                 'content-type': 'text/plain'
             }
