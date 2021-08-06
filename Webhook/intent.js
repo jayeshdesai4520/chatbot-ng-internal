@@ -5,7 +5,6 @@ const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fu
 const {LinkOutSuggestion,Suggestions} = require('actions-on-google'); 
 const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter'];
 const welcomeMessageData = ['Hi! I am the DBpedia bot, How are you doing?','Hello! I am the DBpedia bot,  How can I help you?','Greetings! I am the DBpedia bot,  How can I assist?','Good day! I am the DBpedia bot,  What can I do for you today?']
-const coronabotProfile = ['coronabot-answer-generation','coronabot-data-acquisition']
 let sessionIdManagement = new Map() 
 let askQanaryCount = new Map() 
 let lastKbquestion = new Map() 
@@ -23,7 +22,6 @@ function welcomeIntent(agent) {
         const textindex = Math.floor(Math.random() * welcomeMessageArr.length);
         const output = welcomeMessageArr[textindex];
         console.log(sessionIdManagement)
-        console.log(agent.requestSource)
         if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
             conv.ask(output)
             conv.ask(new Suggestions("What is dbpedia?"))
@@ -69,8 +67,7 @@ function welcomeIntent(agent) {
 }
 
 function dbpediaInfoIntent(agent) { 
-    let conv = agent.conv() 
-    console.log(agent.requestSource)
+        let conv = agent.conv()  
         if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
             conv.ask('DBpedia is a crowd-sourced community effort to extract structured information from Wikipedia and make this information available on the Web.')
             conv.ask(new LinkOutSuggestion({
@@ -117,8 +114,7 @@ function dbpediaInfoIntent(agent) {
 }
 
 function dbpediaContributeIntent(agent) {
-    let conv = agent.conv() 
-    console.log(agent.requestSource)
+        let conv = agent.conv()  
         if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
             conv.ask('There are multiple ways to contribute to DBpedia, You can: 1 - Look at open issues if you want to contribute to the codebase 2 - Improve Documentation 3 - Join the discussion on upcoming features, releases, and issues')
             conv.ask(new LinkOutSuggestion({
@@ -287,24 +283,6 @@ function activeQanaryIntent(agent) {
     }
 }
 
-function activateProfileIntent(agent) {
-    let profile = agent.parameters.profilename;
-    if(profile == 'coronabot'){
-        let finalComponentAdd = 'coronabot-answer-generation'
-        let duplicateArray = sessionIdManagement.get(variable.sessionId)
-        let n = duplicateArray.includes(finalComponentAdd); 
-        if(n == true){
-            agent.add('This profile already exists in the list to know more about active components use command \'list of active qanary components\'.')
-        }else{
-            sessionIdManagement.set(variable.sessionId, sessionIdManagement.get(variable.sessionId) + ',' +  coronabotProfile)
-            agent.add(profile + ' Profile added successfully') 
-        } 
-    }else{
-        agent.add(profile + ' Profile not defined by admin or by you.')   
-    }
-    console.log(sessionIdManagement.get(variable.sessionId))  
-}
-
 function componentStartwithIntent(agent) {
     let startWithName = agent.parameters.startwith; 
     let fuzzy = variable.compare(a) 
@@ -339,51 +317,55 @@ function createProfileIntent(agent) {
 function addComponentsToProfile(agent) {  
     let profileName = agent.parameters.profilename;
     if(profiles.has(variable.sessionId + profileName)){
-    let componentName = agent.parameters.newcomponentname;
-    let fuzzy = variable.compare(a)  
-    let checkComponents = a.get(componentName);
-    if (checkComponents == null){
-        agent.add(componentName + ' not available to know more about active components use command \'list of active qanary components\'.')
+        let componentName = agent.parameters.newcomponentname; 
+        let checkComponents = a.get(componentName);
+        if (checkComponents == null){
+            agent.add(componentName + ' not available to know more about active components use command \'list of active qanary components\'.')
+        }else{
+            let addComponents = checkComponents[0][1]     
+            let finalComponentAdd = addComponents.replace(/['"]+/g, '') 
+            console.log(finalComponentAdd) 
+            if(profiles.get(variable.sessionId + profileName) == ''){
+                profiles.set(variable.sessionId + profileName, profiles.get(variable.sessionId + profileName) +  finalComponentAdd)
+                agent.add('Successfully Added ' + finalComponentAdd + ' to ' + profileName + ' you can add more components by saying Add and then name of the component.')
+                console.log(profiles)
+            }else{
+                profiles.set(variable.sessionId + profileName, profiles.get(variable.sessionId + profileName) + ',' +  finalComponentAdd)
+                agent.add('Successfully Added ' + finalComponentAdd + ' to ' + profileName + ' you can add more components by saying Add and then name of the component.')
+                console.log(profiles)
+            }   
+        } 
     }else{
-        let addComponents = checkComponents[0][1]     
-        let finalComponentAdd = addComponents.replace(/['"]+/g, '') 
-        console.log(finalComponentAdd)
-        profiles.set(variable.sessionId + profileName, profiles.get(variable.sessionId + profileName) + ',' +  finalComponentAdd)
-        agent.add('Successfully Added ' + finalComponentAdd + ' to ' + profileName + ' you can add more components by saying Add and then name of the component.')
-        console.log(profiles)
-    } 
-    }else{
-         agent.add(profileName + ' does not exists, to create new profile you can say \'create profile and then profile name\' like create profile country')
+         agent.add(profileName + ' does not exists, to create new profile you can say \'create profile and then profile name\' like create profile country.')
     }
 }
 
 function removeComponentFromProfile(agent) { 
     let profileName = agent.parameters.profilename;
     let componentName = agent.parameters.newcomponentname;
-    if(profiles.has(variable.sessionId + profileName)){
-    let fuzzy = variable.compare(a)
-    let checkComponents = a.get(componentName); 
-    if (checkComponents == null){
-        agent.add(componentName + ' not available to know more about active components use command \'list of active qanary components\'.')
-    }else{     
-        let deleteComponent = profiles.get(variable.sessionId + profileName)
-        let removeComponents = checkComponents[0][1] 
-        let finalComponentRemove = removeComponents.replace(/['"]+/g, '') 
-        console.log(deleteComponent)  
-        let duplicateArray = profiles.get(variable.sessionId + profileName)
-        console.log(duplicateArray)
-        let n = deleteComponent.includes(finalComponentRemove)
-        if(n == false){
-            agent.add(finalComponentRemove + ' not available in list to know more about ' + profileName  + ' components use command \'show components of \'' + profileName)
-        }else{
-            deleteComponent = deleteComponent.toString().replace("," + finalComponentRemove, "")
-            profiles.set(variable.sessionId + profileName,deleteComponent) 
-            agent.add("Successfully removed " + finalComponentRemove + " from components list of " +  profileName)
-            console.log(profiles)
-        }   
-    }
+    if(profiles.has(variable.sessionId + profileName)){ 
+        let checkComponents = a.get(componentName); 
+        if (checkComponents == null){
+            agent.add(componentName + ' not available to know more about active components use command \'list of active qanary components\'.')
+        }else{     
+            let deleteComponent = profiles.get(variable.sessionId + profileName)
+            let removeComponents = checkComponents[0][1] 
+            let finalComponentRemove = removeComponents.replace(/['"]+/g, '') 
+            console.log(deleteComponent) 
+            console.log(finalComponentRemove) 
+            let n = deleteComponent.includes(finalComponentRemove)
+            if(n == false){
+                agent.add(finalComponentRemove + ' not available in list to know more about ' + profileName  + ' component use command \'show components of ' + profileName + '\'')
+            }else{
+                deleteComponent = deleteComponent.toString().replace("," + finalComponentRemove, "")
+                console.log(typeof(deleteComponent))
+                profiles.set(variable.sessionId + profileName,deleteComponent) 
+                agent.add("Successfully removed " + finalComponentRemove + " from components list of " +  profileName)
+                console.log(profiles)
+            }   
+        }
     }else{
-        agent.add(profileName + ' does not exists, to create new profile you can say \'create profile and then profile name\' like create profile country')
+        agent.add(profileName + ' does not exists, to create new profile you can say \'create profile and then profile name\' like create profile country.')
     }
 }
 
@@ -397,8 +379,20 @@ function componentInformationFromProfile(agent) {
             agent.add(profileName +  ' contains ' + profiles.get(variable.sessionId + profileName));  
         }
     }else{
-       agent.add(profileName + ' does not exists, to create new profile you can say \'create profile and then profile name\' like create profile country') 
-     }
+        agent.add(profileName + ' does not exists, to create new profile you can say \'create profile and then profile name\' like create profile country') 
+    }
+}
+
+
+function activateProfileIntent(agent) {
+    let profileName = agent.parameters.profilename;
+    if(profiles.has(variable.sessionId + profileName)){
+        sessionIdManagement.set(variable.sessionId,profiles.get(variable.sessionId + profileName))
+        console.log(sessionIdManagement)
+        agent.add(profileName + ' Activated Successfully to know about active components use command \'list of active components\'.')  
+    }else{
+        agent.add(profileName + ' Profile not defined by you or by Admin.')   
+    }  
 }
 //End
 
@@ -484,7 +478,6 @@ function fallBack(agent) {
             let answerThree = answerInfo[0][infoThree]["value"]
             let output = infoOne + ':' + answerOne + ' ' + infoTwo + ':' + answerTwo + ' ' + infoThree + ':' + answerThree
             //console.log(response) 
-            console.log(agent.requestSource)
             if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
                 conv.ask(output)
                 conv.ask(new Suggestions("show rdf graph"));
@@ -512,8 +505,7 @@ function fallBack(agent) {
 
         }).catch(function(error) {
             let output = 'No answer could be loaded. Try again? or you can ask for help!' 
-            console.log(error)
-            console.log(agent.requestSource)
+            console.log(error) 
             if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
                 conv.ask(output)
                 conv.ask(new Suggestions("Help"))
@@ -556,9 +548,8 @@ function fallBack(agent) {
 
 
 function helpIntent(agent) {
-    let conv = agent.conv()
-    let output = 'Currently, You can ask me about what is DBpedia? or how to contribute to DBpedia? or you can ask me a question like What is the real name of Batman?'
-    console.log(agent.requestSource)
+        let conv = agent.conv()
+        let output = 'Currently, You can ask me about what is DBpedia? or how to contribute to DBpedia? or you can ask me a question like What is the real name of Batman?'
             if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
                 conv.ask(output) 
                 conv.ask(new LinkOutSuggestion({

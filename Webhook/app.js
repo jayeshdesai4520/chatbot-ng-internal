@@ -1,6 +1,6 @@
 const express = require('express')
 const axios = require('axios');
-const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fulfillment')
+const {WebhookClient} = require('dialogflow-fulfillment')
 const fuzzySet = require('fuzzyset')
 const intent = require("./intent")    
 let intentMap = new Map(); 
