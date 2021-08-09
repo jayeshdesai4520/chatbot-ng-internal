@@ -6,8 +6,7 @@ const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fu
 const {LinkOutSuggestion,Suggestions} = require('actions-on-google'); 
 const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter'];
 const welcomeMessageData = ['Hi! I am the DBpedia bot, How are you doing?','Hello! I am the DBpedia bot,  How can I help you?','Greetings! I am the DBpedia bot,  How can I assist?','Good day! I am the DBpedia bot,  What can I do for you today?']
-let sessionIdManagement = new Map() 
-let askQanaryCount = new Map() 
+let sessionIdManagement = new Map()  
 let lastKbquestion = new Map() 
 let lastGraphId = new Map() 
 let profiles = new Map() 
@@ -17,7 +16,6 @@ function welcomeIntent(agent) {
         let conv = agent.conv()
         if(!sessionIdManagement.has(variable.sessionId)){
             sessionIdManagement.set(variable.sessionId,defaultComponents)
-            askQanaryCount.set(variable.sessionId,0)
         }
         const welcomeMessageArr = welcomeMessageData;
         const textindex = Math.floor(Math.random() * welcomeMessageArr.length);
@@ -257,18 +255,8 @@ async function activateComponentIntent(agent) {
 }
 
 async function activeQanaryIntent(agent) { 
-    if (askQanaryCount.get(variable.sessionId) == 25){
-         agent.add('Limit reached! You can ask again after 5 minutes.')
-         setTimeout(function(){  
-            askQanaryCount.set(variable.sessionId,0)
-            console.log('reset done')
-         }, 300000)
-    }else{ 
-         let fuzzy = await qanaryComponents.getQanaryComponents() 
-         askQanaryCount.set(variable.sessionId, askQanaryCount.get(variable.sessionId) + 1) 
+         let fuzzy = await qanaryComponents.getQanaryComponents()  
          agent.add('Total Active components are ' + fuzzy.length() + ' and components are ' + fuzzy.values() )  
-         console.log(askQanaryCount.get(variable.sessionId))
-    }
 }
 
 async function componentStartwithIntent(agent) {
