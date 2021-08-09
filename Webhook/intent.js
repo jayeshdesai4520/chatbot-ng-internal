@@ -9,6 +9,7 @@ const welcomeMessageData = ['Hi! I am the DBpedia bot, How are you doing?','Hell
 let sessionIdManagement = new Map() 
 let askQanaryCount = new Map() 
 let lastKbquestion = new Map() 
+let lastGraphId = new Map() 
 let profiles = new Map() 
 
 
@@ -407,10 +408,11 @@ function show_RdfgraphIntent(agent) {
     .then(function (response) { 
         let conv = agent.conv() 
         let graphId = response.data.inGraph 
-        console.log(graphId)
-        module.exports.graphId = graphId; 
-        let outputLink = 'Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId
-        let website = 'https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId
+        lastGraphId.set(variable.sessionId,graphId)
+        console.log(lastGraphId)
+        module.exports.graphId = lastGraphId.get(variable.sessionId) 
+        let outputLink = 'Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + lastGraphId.get(variable.sessionId) 
+        let website = 'https://rdfgraphvisualizations.herokuapp.com/visualize/' + lastGraphId.get(variable.sessionId) 
         if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
             conv.ask('Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId)
             conv.ask(new LinkOutSuggestion({
