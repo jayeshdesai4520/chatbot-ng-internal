@@ -220,7 +220,6 @@ async function deactivateComponentIntent(agent) {
         let finalComponentAdd = deactivateComponent.replace(/['"]+/g, '') 
         let duplicateArray = sessionIdManagement.get(variable.sessionId)
         let n = duplicateArray.includes(finalComponentAdd)
-        firstComponent = duplicateArray[0]
         if(n == false){
             agent.add(finalComponentAdd + ' do not exists in the list of active components to know more about active components use command \'list of active components\'.')
         }else{
