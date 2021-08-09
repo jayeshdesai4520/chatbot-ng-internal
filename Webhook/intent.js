@@ -1,7 +1,8 @@
 const qanaryComponents = require('./components');
 const variable = require('./app');
 const axios = require('axios');
-const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fulfillment')
+const fuzzySet = require('fuzzyset');
+const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fulfillment');
 const {LinkOutSuggestion,Suggestions} = require('actions-on-google'); 
 const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter'];
 const welcomeMessageData = ['Hi! I am the DBpedia bot, How are you doing?','Hello! I am the DBpedia bot,  How can I help you?','Greetings! I am the DBpedia bot,  How can I assist?','Good day! I am the DBpedia bot,  What can I do for you today?']
@@ -374,15 +375,26 @@ function componentInformationFromProfile(agent) {
 
 
 function activateProfileIntent(agent) {
-    let profileName = agent.parameters.profilename;
-    if(profiles.has(variable.sessionId + profileName)){
-        sessionIdManagement.set(variable.sessionId,profiles.get(variable.sessionId + profileName))
+    let profileName = agent.parameters.profilename
+    let defaultcomponent = fuzzySet(); 
+    defaultcomponent.add("default component")
+    let checkProfile = defaultcomponent.get(profileName)
+    console.log(checkProfile)
+    if(checkProfile == null){
+        if(profiles.has(variable.sessionId + profileName)){
+            sessionIdManagement.set(variable.sessionId,profiles.get(variable.sessionId + profileName))
+            console.log(sessionIdManagement)
+            agent.add(profileName + ' Activated Successfully to know about active components use command \'list of active components\'.')  
+        }else{
+            agent.add(profileName + ' Profile not defined by you or by Admin.')   
+        }  
+   }else{ 
+        sessionIdManagement.set(variable.sessionId,defaultComponents)
         console.log(sessionIdManagement)
         agent.add(profileName + ' Activated Successfully to know about active components use command \'list of active components\'.')  
-    }else{
-        agent.add(profileName + ' Profile not defined by you or by Admin.')   
-    }  
+   }  
 }
+
 //End
 
 function show_RdfgraphIntent(agent) { 
