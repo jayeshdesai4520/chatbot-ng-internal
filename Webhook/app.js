@@ -25,6 +25,7 @@ intentMap.set('Add components to profile', intent.addComponentsToProfile)
 intentMap.set('Remove component from profile', intent.removeComponentFromProfile) 
 intentMap.set('Component information from profile', intent.componentInformationFromProfile) 
 intentMap.set('Help Intent', intent.helpIntent)
+intentMap.set('sparqltest', intent.sparqltest)
 intentMap.set('Default Fallback Intent', intent.fallBack);
 
 app.post('/webhook', (request, response) => {    
@@ -42,11 +43,6 @@ app.post('/webhook', (request, response) => {
     agent.handleRequest(intentMap)
 
 }) 
-
-app.get('/graphId', (req, res) => { 
-    console.log(intent.graphId)  
-    res.send(intent.graphId)  
-});
 
 
 (async function(){

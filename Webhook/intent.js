@@ -2,6 +2,7 @@ const qanaryComponents = require('./components');
 const variable = require('./app');
 const axios = require('axios');
 const fuzzySet = require('fuzzyset');
+const SparqlClient = require('sparql-http-client');
 const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fulfillment');
 const {LinkOutSuggestion,Suggestions} = require('actions-on-google'); 
 const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter'];
@@ -15,6 +16,7 @@ let profiles = new Map()
 function welcomeIntent(agent) {
         let conv = agent.conv()
         if(!sessionIdManagement.has(variable.sessionId)){
+            //sessionIdManagement.set(variable.sessionId,"," + defaultComponents)
             sessionIdManagement.set(variable.sessionId,defaultComponents)
         }
         const welcomeMessageArr = welcomeMessageData;
@@ -172,7 +174,8 @@ function activeComponentsIntent(agent) {
     if (!sessionIdManagement.has(variable.sessionId)) {
         agent.add('Currently, there are no active components, you can add components by saying Add and then name of the component.')
     }else{
-        let output = 'Currently, active components are ' + sessionIdManagement.get(variable.sessionId)
+        const show = sessionIdManagement.get(variable.sessionId).substring(1) 
+        let output = 'Currently, active components are ' + show
         if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
                 conv.ask(output) 
                 conv.ask(new Suggestions("Reset component list"));
@@ -203,7 +206,7 @@ function activeComponentsIntent(agent) {
 
 function resetComponentsListIntent(agent) {
     sessionIdManagement.set(variable.sessionId, "")
-    sessionIdManagement.set(variable.sessionId,defaultComponents)
+    sessionIdManagement.set(variable.sessionId,"," + defaultComponents)
     agent.add('Reset Successfully, Components list are now empty.') 
     console.log(sessionIdManagement)
 }
@@ -284,7 +287,7 @@ function createProfileIntent(agent) {
     if(profiles.has(variable.sessionId + profileName)){
         agent.add(profileName + ' Profile already exists.'); 
     }else{ 
-        profiles.set(variable.sessionId + profileName,"") 
+        profiles.set(variable.sessionId + profileName,",") 
         console.log(profiles)
         agent.add(profileName + ' Profile added successfully. Now to use this profile you can say start ' + profileName + ' to activate the profile.');      
     }
@@ -304,7 +307,7 @@ async function addComponentsToProfile(agent) {
             let addComponents = checkComponents[0][1]     
             let finalComponentAdd = addComponents.replace(/['"]+/g, '') 
             console.log(finalComponentAdd) 
-            if(profiles.get(variable.sessionId + profileName) == ''){
+            if(profiles.get(variable.sessionId + profileName) == ','){
                 profiles.set(variable.sessionId + profileName, profiles.get(variable.sessionId + profileName) +  finalComponentAdd)
                 agent.add('Successfully Added ' + finalComponentAdd + ' to ' + profileName + ' you can add more components by saying Add and then name of the component.')
                 console.log(profiles)
@@ -336,9 +339,9 @@ async function removeComponentFromProfile(agent) {
             if(n == false){
                 agent.add(finalComponentRemove + ' not available in list to know more about ' + profileName  + ' the component use command \'show components of ' + profileName + '\'')
             }else{
-                deleteComponent = deleteComponent.toString().replace("," + finalComponentRemove, "")
-                console.log(typeof(deleteComponent))
+                deleteComponent = deleteComponent.toString().replace("," + finalComponentRemove, "") 
                 profiles.set(variable.sessionId + profileName,deleteComponent) 
+                profiles.set(variable.sessionId + profileName,",") 
                 agent.add("Successfully removed " + finalComponentRemove + " from components list of " +  profileName)
                 console.log(profiles)
             }   
@@ -350,12 +353,13 @@ async function removeComponentFromProfile(agent) {
 
 
 function componentInformationFromProfile(agent) {  
-    let profileName = agent.parameters.profilename;
+    let profileName = agent.parameters.profilename
+    const show = profiles.get(variable.sessionId + profileName).substring(1) 
     if(profiles.has(variable.sessionId + profileName)){
-        if(profiles.get(variable.sessionId + profileName) == ""){
+        if(profiles.get(variable.sessionId + profileName) == ","){
             agent.add(profileName + ' list is empty.') 
         }else{
-            agent.add(profileName +  ' contains ' + profiles.get(variable.sessionId + profileName));  
+            agent.add(profileName +  ' contains ' + show)
         }
     }else{
         agent.add(profileName + ' does not exists, to create new profile you can say \'create profile and then profile name\' like create profile country') 
@@ -378,7 +382,7 @@ function activateProfileIntent(agent) {
             agent.add(profileName + ' Profile not defined by you or by Admin.')   
         }  
    }else{ 
-        sessionIdManagement.set(variable.sessionId,defaultComponents)
+        sessionIdManagement.set(variable.sessionId,"," + defaultComponents)
         console.log(sessionIdManagement)
         agent.add(profileName + ' Activated Successfully to know about active components use command \'list of active components\'.')  
    }  
@@ -388,6 +392,7 @@ function activateProfileIntent(agent) {
 
 function show_RdfgraphIntent(agent) { 
     console.log(lastKbquestion.get(variable.sessionId))
+    console.log(sessionIdManagement.get(variable.sessionId))
     let params = {
                     "question": lastKbquestion.get(variable.sessionId),
                     "componentlist": sessionIdManagement.get(variable.sessionId)
@@ -397,8 +402,7 @@ function show_RdfgraphIntent(agent) {
         let conv = agent.conv() 
         let graphId = response.data.inGraph 
         lastGraphId.set(variable.sessionId,graphId)
-        console.log(lastGraphId)
-        module.exports.graphId = lastGraphId.get(variable.sessionId) 
+        console.log(lastGraphId) 
         let outputLink = 'Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + lastGraphId.get(variable.sessionId) 
         let website = 'https://rdfgraphvisualizations.herokuapp.com/visualize/' + lastGraphId.get(variable.sessionId) 
         if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
@@ -441,16 +445,17 @@ function show_RdfgraphIntent(agent) {
 }
 
 function fallBack(agent) {
-    let conv = agent.conv() 
-    console.log(variable.kbQuestion)
+    let conv = agent.conv()  
     lastKbquestion.set(variable.sessionId,variable.kbQuestion)
     console.log(lastKbquestion)
+    console.log(sessionIdManagement.get(variable.sessionId))
     return axios.post('https://webengineering.ins.hs-anhalt.de:43740/gerbil-execute/' + sessionIdManagement.get(variable.sessionId)  + '?query=' + lastKbquestion.get(variable.sessionId), {
             headers: {
                 'content-type': 'text/plain'
             }
         })
         .then(function(response) { 
+            console.log(response)
             let body = response.data.questions
             let status = response.status
             result = JSON.stringify(body[0])
@@ -575,6 +580,47 @@ function helpIntent(agent) {
             }    
 }
 
+
+
+async function sparqltest(agent) {    
+      const query = `
+        PREFIX dbo: <http://dbpedia.org/ontology/> 
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+
+        SELECT ?country ?city ?city_name
+        WHERE {
+            ?city rdf:type dbo:City ;
+                  foaf:name ?city_name ;
+                  dbo:country ?country .
+
+            ?country foaf:name "Canada"@en .
+
+            FILTER(langMatches(lang(?city_name), "en"))
+        }
+        ORDER BY ?city_name
+        LIMIT 2`;
+    const client = new SparqlClient({
+          endpointUrl: 'https://dbpedia.org/sparql',
+          //user: "admin",
+          //password: "admin",
+          headers: {
+            Authorization: 'Bearer token'
+          }
+        }) 
+    const stream = await client.query.select(query)
+    stream.on('data', row => {
+      Object.entries(row).forEach(([key, value]) => { 
+        console.log(`${key}: ${value.value} (${value.termType})`)
+      })
+    })
+
+    stream.on('error', err => {
+      console.log(err)
+    })
+    agent.add("hello")
+}
+
  
 
-module.exports = { welcomeIntent,dbpediaInfoIntent,dbpediaContributeIntent,activeComponentsIntent,resetComponentsListIntent,deactivateComponentIntent,activateComponentIntent,activeQanaryIntent,activateProfileIntent,componentStartwithIntent,show_RdfgraphIntent,createProfileIntent,addComponentsToProfile,removeComponentFromProfile,componentInformationFromProfile,helpIntent,fallBack  };
+module.exports = { sparqltest,welcomeIntent,dbpediaInfoIntent,dbpediaContributeIntent,activeComponentsIntent,resetComponentsListIntent,deactivateComponentIntent,activateComponentIntent,activeQanaryIntent,activateProfileIntent,componentStartwithIntent,show_RdfgraphIntent,createProfileIntent,addComponentsToProfile,removeComponentFromProfile,componentInformationFromProfile,helpIntent,fallBack  };
