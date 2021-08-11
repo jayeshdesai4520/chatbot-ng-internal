@@ -5,7 +5,7 @@ const fuzzySet = require('fuzzyset');
 const SparqlClient = require('sparql-http-client');
 const {WebhookClient,Card,Suggestion,Payload,Platforms} = require('dialogflow-fulfillment');
 const {LinkOutSuggestion,Suggestions} = require('actions-on-google'); 
-const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter'];
+const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter']
 const welcomeMessageData = ['Hi! I am the DBpedia bot, How are you doing?','Hello! I am the DBpedia bot,  How can I help you?','Greetings! I am the DBpedia bot,  How can I assist?','Good day! I am the DBpedia bot,  What can I do for you today?']
 let sessionIdManagement = new Map()  
 let lastKbquestion = new Map() 
@@ -16,8 +16,7 @@ let profiles = new Map()
 function welcomeIntent(agent) {
         let conv = agent.conv()
         if(!sessionIdManagement.has(variable.sessionId)){
-            //sessionIdManagement.set(variable.sessionId,"," + defaultComponents)
-            sessionIdManagement.set(variable.sessionId,defaultComponents)
+            sessionIdManagement.set(variable.sessionId,"," + defaultComponents)
         }
         const welcomeMessageArr = welcomeMessageData;
         const textindex = Math.floor(Math.random() * welcomeMessageArr.length);
@@ -222,7 +221,7 @@ async function deactivateComponentIntent(agent) {
         let deactivateComponent = deactivateResult[0][1]     
         let finalComponentAdd = deactivateComponent.replace(/['"]+/g, '') 
         let duplicateArray = sessionIdManagement.get(variable.sessionId)
-        let n = duplicateArray.includes(finalComponentAdd)
+        let n = duplicateArray.includes("," + finalComponentAdd)
         if(n == false){
             agent.add(finalComponentAdd + ' do not exists in the list of active components to know more about active components use command \'list of active components\'.')
         }else{
@@ -245,7 +244,7 @@ async function activateComponentIntent(agent) {
         let addComponent = compareResult[0][1] 
         let finalComponentAdd = addComponent.replace(/['"]+/g, '') 
         let duplicateArray = sessionIdManagement.get(variable.sessionId)
-        let n = duplicateArray.includes(finalComponentAdd); 
+        let n = duplicateArray.includes("," + finalComponentAdd); 
         if(n == true){
             agent.add(finalComponentAdd + ' already exists in the list to know more about active components use command \'list of active qanary components\'.')
         }else{
@@ -392,9 +391,11 @@ function activateProfileIntent(agent) {
 function show_RdfgraphIntent(agent) { 
     console.log(lastKbquestion.get(variable.sessionId))
     console.log(sessionIdManagement.get(variable.sessionId))
+    const show = sessionIdManagement.get(variable.sessionId).substring(1)
+    console.log(show) 
     let params = {
                     "question": lastKbquestion.get(variable.sessionId),
-                    "componentlist": sessionIdManagement.get(variable.sessionId)
+                    "componentlist": show
     }
     return axios.post('https://webengineering.ins.hs-anhalt.de:43740/startquestionansweringwithtextquestion', params)
     .then(function (response) { 
@@ -447,14 +448,14 @@ function fallBack(agent) {
     let conv = agent.conv()  
     lastKbquestion.set(variable.sessionId,variable.kbQuestion)
     console.log(lastKbquestion)
-    console.log(sessionIdManagement.get(variable.sessionId))
-    return axios.post('https://webengineering.ins.hs-anhalt.de:43740/gerbil-execute/' + sessionIdManagement.get(variable.sessionId)  + '?query=' + lastKbquestion.get(variable.sessionId), {
+    const show = sessionIdManagement.get(variable.sessionId).substring(1)
+    console.log(show) 
+    return axios.post('https://webengineering.ins.hs-anhalt.de:43740/gerbil-execute/' + show  + '?query=' + lastKbquestion.get(variable.sessionId), {
             headers: {
                 'content-type': 'text/plain'
             }
         })
-        .then(function(response) { 
-            console.log(response)
+        .then(function(response) {  
             let body = response.data.questions
             let status = response.status
             result = JSON.stringify(body[0])
@@ -581,31 +582,16 @@ function helpIntent(agent) {
 
 
 
-async function sparqltest(agent) {    
+async function sparqltest(agent) {   
       const query = `
-        PREFIX dbo: <http://dbpedia.org/ontology/> 
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/> 
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
-
-        SELECT ?country ?city ?city_name
+        SELECT (COUNT(?s) as ?numTriples)
         WHERE {
-            ?city rdf:type dbo:City ;
-                  foaf:name ?city_name ;
-                  dbo:country ?country .
-
-            ?country foaf:name "Canada"@en .
-
-            FILTER(langMatches(lang(?city_name), "en"))
-        }
-        ORDER BY ?city_name
-        LIMIT 2`;
+        ?s ?p ?o .
+        }`;
     const client = new SparqlClient({
-          endpointUrl: 'https://dbpedia.org/sparql',
-          //user: "admin",
-          //password: "admin",
-          headers: {
-            Authorization: 'Bearer token'
-          }
+          endpointUrl: 'https://webengineering.ins.hs-anhalt.de:40159/qanary/query',
+          user: "admin",
+          password: "admin"
         }) 
     const stream = await client.query.select(query)
     stream.on('data', row => {
