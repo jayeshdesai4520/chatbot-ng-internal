@@ -1,9 +1,9 @@
-const express = require('express')
+const express = require('express');
 const axios = require('axios');
-const {WebhookClient} = require('dialogflow-fulfillment')
-const intent = require("./intent") 
-const qanaryComponents = require('./components');   
-let intentMap = new Map(); 
+const {WebhookClient} = require('dialogflow-fulfillment');
+const intent = require("./intent") ;
+const qanaryComponents = require('./components') ; 
+let intentMap = new Map() 
 const app = express()
 app.use(express.json())
 
@@ -26,7 +26,7 @@ intentMap.set('Remove component from profile', intent.removeComponentFromProfile
 intentMap.set('Component information from profile', intent.componentInformationFromProfile) 
 intentMap.set('Help Intent', intent.helpIntent)
 intentMap.set('sparqltest', intent.sparqltest)
-intentMap.set('Default Fallback Intent', intent.fallBack);
+intentMap.set('Default Fallback Intent', intent.fallBack)
 
 app.post('/webhook', (request, response) => {    
     // get agent from request
@@ -37,12 +37,12 @@ app.post('/webhook', (request, response) => {
     let sessionId = request.body.session.split('/')[4] 
     if(request.body.queryResult.intent.displayName == 'Default Fallback Intent'){
     let kbQuestion = request.body.queryResult.queryText
-    module.exports.kbQuestion = kbQuestion; 
+    module.exports.kbQuestion = kbQuestion 
     }   
-    module.exports.sessionId = sessionId; 
+    module.exports.sessionId = sessionId 
     agent.handleRequest(intentMap)
 
-}) 
+});
 
 
 (async function(){

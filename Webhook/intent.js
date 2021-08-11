@@ -234,7 +234,6 @@ async function deactivateComponentIntent(agent) {
     }
 }
 
-
 async function activateComponentIntent(agent) {
     let activate = agent.parameters.activatecomponent;  
     let activateComponent = JSON.stringify(activate) 
