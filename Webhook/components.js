@@ -26,7 +26,6 @@ module.exports.getQanaryComponents = async () => {
 module.exports.updateComponents = function() {
   setInterval(async function(){
     await getComponents() 
-    //console.log("15 sec done")
-    //console.log(qanaryComponents.values())  
+    //console.log("15 sec done") 
     }, 15000);
 }

@@ -1,8 +1,8 @@
 const express = require('express');
 const axios = require('axios');
 const {WebhookClient} = require('dialogflow-fulfillment');
-const intent = require("./intent") ;
-const qanaryComponents = require('./components') ; 
+const intent = require("./intent");
+const qanaryComponents = require('./components'); 
 let intentMap = new Map() 
 const app = express()
 app.use(express.json())
@@ -33,15 +33,8 @@ app.post('/webhook', (request, response) => {
     let agent = new WebhookClient({
         request: request,
         response: response
-    })  
-    let sessionId = request.body.session.split('/')[4] 
-    if(request.body.queryResult.intent.displayName == 'Default Fallback Intent'){
-    let kbQuestion = request.body.queryResult.queryText
-    module.exports.kbQuestion = kbQuestion 
-    }   
-    module.exports.sessionId = sessionId 
+    })   
     agent.handleRequest(intentMap)
-
 });
 
 
