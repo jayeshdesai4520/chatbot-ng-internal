@@ -7,6 +7,7 @@ const {LinkOutSuggestion,Suggestions} = require('actions-on-google');
 const defaultComponents = ['NED-DBpediaSpotlight', 'QueryBuilderSimpleRealNameOfSuperHero', 'SparqlExecuter', 'OpenTapiocaNED', 'BirthDataQueryBuilder', 'WikidataQueryExecuter']
 const profileComponents = []
 const welcomeMessageData = ['Hi! I am the DBpedia bot, How are you doing?','Hello! I am the DBpedia bot,  How can I help you?','Greetings! I am the DBpedia bot,  How can I assist?','Good day! I am the DBpedia bot,  What can I do for you today?']
+const rdfVizURL = 'https://webengineering.ins.hs-anhalt.de:41022'
 let sessionIdManagement = new Map()  
 let lastKbquestion = new Map() 
 let lastGraphId = new Map() 
@@ -479,7 +480,7 @@ function fallBack(agent) {
                 url: 'https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about',
             }))
             agent.add(conv)
-            }else{ 
+            } else{ 
                 agent.add(output)    
                 const payload =  {
                       "richContent": [
@@ -526,10 +527,10 @@ function show_RdfgraphIntent(agent) {
         let graphId = response.data.inGraph 
         lastGraphId.set(agent.session.split('/')[4],graphId)
         console.log(lastGraphId) 
-        let outputLink = 'Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + lastGraphId.get(agent.session.split('/')[4]) 
-        let website = 'https://rdfgraphvisualizations.herokuapp.com/visualize/' + lastGraphId.get(agent.session.split('/')[4]) 
+        let outputLink = 'Go to this link to see RDF Visualization - ' + rdfVizURL + '/visualize/' + lastGraphId.get(agent.session.split('/')[4]) 
+        let website = rdfVizURL + '/visualize/' + lastGraphId.get(agent.session.split('/')[4]) 
         if(agent.requestSource == "ACTIONS_ON_GOOGLE"){
-            conv.ask('Go to this link to see RDF Visualization - https://rdfgraphvisualizations.herokuapp.com/visualize/' + graphId)
+            conv.ask('Go to this link to see RDF Visualization - ' + rdfVizURL + '/visualize/' + graphId)
             conv.ask(new LinkOutSuggestion({
                 name: 'Graph Visualization',
                 url: website,
@@ -609,7 +610,7 @@ function helpIntent(agent) {
 
 
 async function sparqltest(agent) {   
-      const query = `
+    const query = `
         SELECT (COUNT(?s) as ?numTriples)
         WHERE {
         ?s ?p ?o .
@@ -631,7 +632,5 @@ async function sparqltest(agent) {
     })
     agent.add("hello")
 }
-
- 
 
 module.exports = { sparqltest,welcomeIntent,dbpediaInfoIntent,dbpediaContributeIntent,activeComponentsIntent,resetComponentsListIntent,deactivateComponentIntent,activateComponentIntent,activeQanaryIntent,activateProfileIntent,componentStartwithIntent,show_RdfgraphIntent,createProfileIntent,addComponentsToProfile,removeComponentFromProfile,componentInformationFromProfile,helpIntent,fallBack  };

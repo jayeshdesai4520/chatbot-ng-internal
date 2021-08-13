@@ -1,5 +1,7 @@
 const express = require('express');
 const axios = require('axios');
+const fs = require('fs')
+const https = require('https')
 const {WebhookClient} = require('dialogflow-fulfillment');
 const intent = require("./intent");
 const qanaryComponents = require('./components'); 
@@ -8,6 +10,10 @@ const app = express()
 app.use(express.json())
 
 
+const sslConfig = {
+    key: fs.readFileSync('./certs/key.key'),
+    cert: fs.readFileSync('./certs/cert.cert'),
+}
 
 intentMap.set('Default Welcome Intent', intent.welcomeIntent)
 intentMap.set('DBpedia Info Intent', intent.dbpediaInfoIntent)
@@ -39,8 +45,8 @@ app.post('/webhook', (request, response) => {
 
 
 (async function(){
-    await qanaryComponents.getQanaryComponents() 
-    app.listen(process.env.PORT || 3000, () => {
+    await qanaryComponents.getQanaryComponents()
+    https.createServer(sslConfig, app).listen(process.env.PORT || 3000, () => {
     qanaryComponents.updateComponents() 
     console.log('Server is Running on port 3000')
    })

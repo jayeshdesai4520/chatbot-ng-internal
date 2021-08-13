@@ -3,9 +3,11 @@ import os
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_graph
 from pyvis.network import Network 
 from SPARQLWrapper import SPARQLWrapper, JSON , XML
-import requests 
+import requests
+
 app = Flask('testapp')
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config['DEPLOYMENT'] = False
 
 @app.route('/visualize/<graphID>')
 def show_graph(graphID): 
@@ -74,6 +76,8 @@ def html_page():
 
 
 if __name__ == '__main__':
-	port = int(os.environ.get("PORT", 5000))
-	app.run(host='0.0.0.0', port=port)
-	app.run()
+    port = int(os.environ.get("PORT", 5000))
+	if app.config['DEPLOYMENT']:
+    	app.run(host='0.0.0.0', port=port, ssl_context=(os.environ.get("SSL_CERT"), os.environ.get("SSL_KEY")))
+	else:
+    	app.run(host='0.0.0.0', port=port)
