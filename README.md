@@ -17,22 +17,22 @@ You will need to register a free account on [Dialogflow](https://dialogflow.clou
 
 ### Installation
 
-Step one - Download or Clone the repo, Navigate to the directory named zip file <br> <br>
-Step two - Next, select the gear icon to go to settings <br> <br>
+- Download or clone the repository, Navigate to the directory named zip file <br> <br>
+- Next, select the gear icon to go to settings <br> <br>
 ![](https://imgur.com/kXBTaEr.png)  <br> <br>
-Step three - Next, select the Export and Import tab.  <br> <br>
+- After that, select the export and import tab.  <br> <br>
 ![](https://imgur.com/Gr5VVBj.png)  <br> <br>
-Step four - Now, select the local zip file  <br> <br>
+- Now, click on import zip file and select the zip file  <br> <br>
 ![](https://imgur.com/dd59yCh.png)  <br> <br>
 Dialogflow will import the entire agent from the zip file for you. 
 
 ### Setup webhook in heroku 
 
-Step one - make account in heroku <br> <br>
-Step two - create new app and follow the given instruction in heroku website <br> <br>
-Step three - click on open app and copy the url and add /webhook at the last of the url <br> <br>
+- Sign up for Heroku <br> <br>
+- Create new app and follow the instruction given in Heroku website <br> <br>
+- Now, click on open app and copy the url and add /webhook at the end of the url <br> <br>
 ![](https://imgur.com/M8PnbnO.png)  <br> <br>
-Step four - go to fulfillment section in dialogflow and click save. <br> <br>
+- Last step is to click on fulfillment section in dialogflow and click save. <br> <br>
 ![](https://imgur.com/LlDxjLW.png)  <br> <br>
  
  
