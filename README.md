@@ -70,7 +70,6 @@ See `contributing.md` for ways to get started.
 
 Feedback is appreciated! submit a new issue!
 
-## Special Thanks
 
 ## License
 
