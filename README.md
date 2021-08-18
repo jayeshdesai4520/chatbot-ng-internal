@@ -1,8 +1,21 @@
 # DBpedia Chatbot - New Generation
-The Modern DBpedia chatbot with functionality of the Qanary framework including its plug-and-play components and their optimization  <br> <br>
+The Modern DBpedia chatbot with functionality of the Qanary framework including its plug-and-play components and their optimization.  <br> <br>
+
+This repository will provide the implementation of the project proposed using the title ['Modular DBpedia Chatbot'](https://forum.dbpedia.org/t/modular-dbpedia-chatbot-gsoc-2021/953) that is funded by the [Google Summer of Code program](https://summerofcode.withgoogle.com/projects/#5922382260207616). Please find [more information in the DBpedia forum](https://forum.dbpedia.org/t/modular-dbpedia-chatbot-gsoc-2021/953) and in the [blog of the project](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about).
+
+The project is carried out by [Jayesh Desai](https://github.com/jayeshdesai4520). 
+
+The project Supervision and support is done by:
+
+* [Andreas Both](https://github.com/anbo-de)
+* [Alexander Perevalov](https://github.com/Perevalov)
+* [Ricardo Usbeck](https://github.com/RicardoUsbeck)
+* [Ram Athreya](https://github.com/ram-g-athreya)
+___
 [Final Application](https://tacoaccounttest.github.io/) <br> 
 [How to use DBpedia Chatbot](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about) <br> 
 For more information about this project and **GSoC Progress** please refer to [GSoC Wiki](https://github.com/jayeshdesai4520/chatbot-ng-internal/wiki) and [Progress](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/)
+
 ## Folder Structure
 
     ├── Dialogflow-Agent        # Chatbot code
@@ -56,6 +69,8 @@ See `contributing.md` for ways to get started.
 ## Feedback
 
 Feedback is appreciated! submit a new issue!
+
+## Special Thanks
 
 ## License
 
