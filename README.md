@@ -35,8 +35,18 @@ Dialogflow will import the entire agent from the zip file for you.
 - Last step is to click on fulfillment section in dialogflow and click save. <br> <br>
 ![](https://imgur.com/LlDxjLW.png)  <br> <br>
  
+## Embed Code
+```
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<df-messenger
+  intent="WELCOME"
+  chat-title="DBpedia Chatbot"
+  agent-id= <your agent ID>
+  language-code="en"
+></df-messenger>
+```
  
- ## Contributing
+## Contributing
 
 Contributions are always welcome!
 
