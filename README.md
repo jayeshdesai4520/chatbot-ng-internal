@@ -11,6 +11,10 @@ The project Supervision and support is done by:
 * [Alexander Perevalov](https://github.com/Perevalov)
 * [Ricardo Usbeck](https://github.com/RicardoUsbeck)
 * [Ram Athreya](https://github.com/ram-g-athreya)
+
+## Quick Links
+- [Qanary Framework](https://github.com/WDAqua/Qanary)
+- [Question Answer Components](https://github.com/WDAqua/Qanary-question-answering-components)
 ___
 [Final Application](https://tacoaccounttest.github.io/) <br> 
 [How to use DBpedia Chatbot](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about) <br> 
@@ -54,8 +58,8 @@ Dialogflow will import the entire agent from the zip file for you.
 <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
 <df-messenger
   intent="WELCOME"
-  chat-title="DBpedia Chatbot"
-  agent-id= <your agent ID>
+  chat-title="DBpediaChatbotNG"
+  agent-id="ad6b7d53-5823-4d2a-a540-529c4259cb7a"
   language-code="en"
 ></df-messenger>
 ```
