@@ -18,9 +18,11 @@ The project Supervision and support is done by:
 ___
 [Final Application](https://tacoaccounttest.github.io/) <br> 
 [How to use DBpedia Chatbot](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about) <br> 
-For more information about this project and **GSoC Progress** please refer to [GSoC Wiki](https://github.com/jayeshdesai4520/chatbot-ng-internal/wiki) and [Progress](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/)
+For more information about this project and **GSoC Progress** please refer to [GSoC Wiki](https://github.com/jayeshdesai4520/chatbot-ng-internal/wiki) and [Progress](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/) <br> 
 
+Tap below GIF to open the Video  <br>  <br> 
 [![DBpedia Chatbot YouTube Video](https://j.gifs.com/36y1JR.gif)](https://youtu.be/acUmhZbHfKY)
+
 
 ## Folder Structure
 
