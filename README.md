@@ -1,7 +1,7 @@
 # DBpedia Chatbot - New Generation
 The Modern DBpedia chatbot with the functionality of the Qanary framework including its plug-and-play components and their optimization.  <br>
 
-This repository will provide the implementation of the project proposed using the title ['Modular DBpedia Chatbot'](https://forum.dbpedia.org/t/modular-dbpedia-chatbot-gsoc-2021/953) that is funded by the [Google Summer of Code program](https://summerofcode.withgoogle.com/projects/#5922382260207616). Please find [more information in the DBpedia forum](https://forum.dbpedia.org/t/modular-dbpedia-chatbot-gsoc-2021/953) and in the [blog of the project](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about).
+This repository will provide the implementation of the project proposed using the title ['Modular DBpedia Chatbot'](https://forum.dbpedia.org/t/modular-dbpedia-chatbot-gsoc-2021/953) that is funded by the [Google Summer of Code program](https://summerofcode.withgoogle.com/projects/#5922382260207616). Please find [more information in the DBpedia forum](https://forum.dbpedia.org/t/modular-dbpedia-chatbot-gsoc-2021/953) and in the [blog of the project for more detailed information.](https://jayeshdesai4520.github.io/DBpedia-GSoC-2021/about)
 
 The project is carried out by [Jayesh Desai](https://github.com/jayeshdesai4520). 
 
