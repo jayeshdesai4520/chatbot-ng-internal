@@ -1,18 +1,23 @@
 const express = require('express');
 const axios = require('axios');
-const fs = require('fs')
 const https = require('https')
+const fs = require('fs')
 const {WebhookClient} = require('dialogflow-fulfillment');
 const intent = require("./intent");
 const qanaryComponents = require('./components'); 
 let intentMap = new Map() 
 const app = express()
+const certsPath = './certs'
+let isSSL = false
 app.use(express.json())
 
+let sslConfig = { 
+}
 
-const sslConfig = {
-    key: fs.readFileSync('./certs/key.key'),
-    cert: fs.readFileSync('./certs/cert.cert'),
+if (fs.existsSync(`${certsPath}/key.key`) && fs.existsSync(`${certsPath}/cert.cert`)) { 
+    sslConfig.key = fs.readFileSync(`${certsPath}/key.key`),
+    sslConfig.cert = fs.readFileSync(`${certsPath}/cert.cert`)
+    isSSL = true
 }
 
 intentMap.set('Default Welcome Intent', intent.welcomeIntent)
@@ -25,13 +30,15 @@ intentMap.set('Activate component Intent', intent.activateComponentIntent)
 intentMap.set('Active Qanary components', intent.activeQanaryIntent) 
 intentMap.set('Activate profile component', intent.activateProfileIntent) 
 intentMap.set('Component startwith intent', intent.componentStartwithIntent) 
-intentMap.set('show rdf visualization', intent.show_RdfgraphIntent) 
+intentMap.set('show rdf visualization', intent.showRDFGraphIntent) 
 intentMap.set('Create profile intent', intent.createProfileIntent) 
 intentMap.set('Add components to profile', intent.addComponentsToProfile) 
 intentMap.set('Remove component from profile', intent.removeComponentFromProfile) 
 intentMap.set('Component information from profile', intent.componentInformationFromProfile) 
 intentMap.set('Help Intent', intent.helpIntent)
+intentMap.set('Empty component list', intent.Emptycomponentlist) 
 intentMap.set('sparqltest', intent.sparqltest)
+intentMap.set('Ask Qanary Intent', intent.fallBack)
 intentMap.set('Default Fallback Intent', intent.fallBack)
 
 app.post('/webhook', (request, response) => {    
@@ -45,9 +52,22 @@ app.post('/webhook', (request, response) => {
 
 
 (async function(){
-    await qanaryComponents.getQanaryComponents()
-    https.createServer(sslConfig, app).listen(process.env.PORT || 3000, () => {
-    qanaryComponents.updateComponents() 
-    console.log('Server is Running on port 3000')
-   })
+    await qanaryComponents.getQanaryComponents() 
+    if (isSSL) {
+        https.createServer(sslConfig, app).listen(process.env.PORT || 3000, () => {
+            qanaryComponents.updateComponents() 
+            console.log('Server is Running on port 3000')
+        })
+    } else {
+        app.listen(process.env.PORT || 3000, () => {
+            qanaryComponents.updateComponents() 
+            console.log('Server is Running on port 3000')
+        })
+    }
+    
 })()
+
+process.on('SIGINT', function() {
+    console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
+    process.exit(1);
+});
